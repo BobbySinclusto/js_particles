@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Test</title>
+    </head>
+    <body>
+        <script>
+            let box = document.getElementById("asfd");
+            let body = document.body;
+            let particles = [];
+            for (let i = 0; i < 10; ++i) {
+                let particle = new Object();
+                particle.box = document.createElement("div");
+                particle.x = window.innerWidth * Math.random();
+                particle.y = window.innerHeight * Math.random();
+                particle.x_v = 0.1;
+                particle.y_v = 0.1;
+                particle.box.style = `position: fixed; top: ${particle.y}px; left: ${particle.x}px; height: 5px; width: 5px; background-color: green;`;
+                body.appendChild(particle.box);
+                particles.push(particle);
+            }
+            let mouseX = 1;
+            let mouseY = 1;
+            let mass = 0.1;
+            let friction_coeff = 0.05;
+            
+            setInterval(() => {
+                for (particle of particles) {
+                    // calculate pull force vector
+                    x_len = (mouseX - particle.x);
+                    y_len = (mouseY - particle.y);
+                    h_len = Math.sqrt(x_len * x_len + y_len * y_len);
+                    x_pf = x_len / h_len;
+                    y_pf = y_len / h_len;
+
+                    // calculate friction vector
+                    v_h = Math.sqrt(particle.x_v * particle.x_v + particle.y_v * particle.y_v);
+                    x_ff = -1 * friction_coeff * particle.x_v / v_h;
+                    y_ff = -1 * friction_coeff * particle.y_v / v_h;
+
+                    particle.x_v += mass * (x_pf + x_ff);
+                    particle.y_v += mass * (y_pf + y_ff);
+
+                    particle.y += particle.y_v;
+                    particle.x += particle.x_v;
+                    particle.box.style.top = particle.y + 'px';
+                    particle.box.style.left = particle.x + 'px';
+                }
+
+            }, 10);
+
+            document.onmousemove = (event) => {
+                mouseX = event.pageX;
+                mouseY = event.pageY;
+            };
+        </script>
+    </body>
+</html>
